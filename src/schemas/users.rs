@@ -2,7 +2,6 @@ use serde;
 
 use uuid::Uuid;
 
-
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct User {
     pub id: Uuid,
@@ -20,7 +19,6 @@ pub struct User {
     pub updated_at: u32,
 }
 
-
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct UserAssets {
     pub id: Uuid,
@@ -31,7 +29,6 @@ pub struct UserAssets {
     pub created_at: u32,
     pub updated_at: u32,
 }
-
 
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct UserOrders {

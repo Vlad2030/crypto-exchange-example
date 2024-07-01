@@ -2,7 +2,6 @@ use serde;
 
 use uuid::Uuid;
 
-
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct Network {
     pub id: Uuid,
@@ -24,7 +23,6 @@ pub struct Network {
     pub created_at: u32,
     pub updated_at: u32,
 }
-
 
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct NetworkTransactions {

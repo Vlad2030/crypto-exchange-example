@@ -4,7 +4,6 @@ use uuid::Uuid;
 
 use crate::schemas::orders::Order;
 
-
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct Asset {
     pub id: Uuid,
