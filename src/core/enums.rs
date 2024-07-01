@@ -12,7 +12,6 @@ impl OrderSide {
     }
 }
 
-
 pub enum OrderType {
     Limit,
     Market,
@@ -32,7 +31,6 @@ impl OrderType {
         }
     }
 }
-
 
 pub enum OrderStatus {
     New,
@@ -54,7 +52,6 @@ impl OrderStatus {
     }
 }
 
-
 pub enum Permissions {
     Spot,
     Futures,
@@ -68,7 +65,6 @@ impl Permissions {
         }
     }
 }
-
 
 pub enum KlineInterval {
     m1,
@@ -98,7 +94,6 @@ impl KlineInterval {
     }
 }
 
-
 pub enum DepositStatus {
     Small,
     TimeDelay,
@@ -122,7 +117,6 @@ impl DepositStatus {
         }
     }
 }
-
 
 pub enum WithdrawStatus {
     Apply,
@@ -154,7 +148,6 @@ impl WithdrawStatus {
     }
 }
 
-
 pub enum AccountType {
     Spot,
     Futures,
@@ -168,4 +161,3 @@ impl AccountType {
         }
     }
 }
-
