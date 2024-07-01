@@ -2,6 +2,8 @@ use serde;
 
 use uuid::Uuid;
 
+use crate::schemas::orders::Order;
+
 
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct Asset {
@@ -28,6 +30,7 @@ pub struct Asset {
     pub taker_commission: f32,
     pub full_name: String,
     pub networks: Vec<Uuid>,
+    pub orders: Vec<Order>,
     pub created_at: u32,
     pub updated_at: u32,
 }
