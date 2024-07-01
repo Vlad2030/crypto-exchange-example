@@ -15,7 +15,7 @@ pub struct User {
     pub account_type: Vec<String>,
     pub assets: Vec<Uuid>,
     pub orders: Vec<Uuid>,
-    pub history: Some,
+    pub tx_history: Vec<Uuid>,
     pub created_at: u32,
     pub updated_at: u32,
 }
