@@ -1,9 +1,8 @@
 use serde;
 
-use crate::schemas::users::{User, UserAssets, UserOrders};
 use crate::schemas::assets::Asset;
 use crate::schemas::networks::{Network, NetworkTransactions};
-
+use crate::schemas::users::{User, UserAssets, UserOrders};
 
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct Storage {
@@ -17,7 +16,7 @@ pub struct Storage {
     pub networks_txns: Vec<NetworkTransactions>,
 }
 
-pub static mut STORAGE: Storage = Storage{
+pub static mut STORAGE: Storage = Storage {
     users: Vec::new(),
     users_assets: Vec::new(),
     users_orders: Vec::new(),
