@@ -11,5 +11,12 @@ pub fn get_epoch_time() -> i64 {
     return SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()
+        .as_secs() as i64;
+}
+
+pub fn get_epoch_time_as_millis() -> i64 {
+    return SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
         .as_millis() as i64;
 }

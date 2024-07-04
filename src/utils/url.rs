@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 
-pub fn build_url(
+pub fn build(
     base_url: String,
     endpoint: Option<String>,
     params: Option<HashMap<String, String>>,
@@ -12,7 +12,7 @@ pub fn build_url(
         let mut endpoint = endpoint.unwrap();
 
         if base_url.as_str().ends_with("/") && endpoint.starts_with("/") {
-            endpoint = endpoint[1..endpoint.len()].to_string();
+            endpoint = endpoint[1..endpoint.len()].into();
 
             println!("there should be one slash between `base_url` and `endpoint`");
             println!("removed slash from `endpoint`");
@@ -25,13 +25,13 @@ pub fn build_url(
         let parameters: HashMap<String, String> = params.unwrap();
         let parameters_length: usize = parameters.len();
 
-        url.push("?".to_string());
+        url.push("?".into());
 
         for (key, value) in parameters.iter() {
             url.push(format!("{}={}", key, value));
 
             if parameters_length >= 2 {
-                url.push("&".to_string())
+                url.push("&".into())
             }
         }
     }
