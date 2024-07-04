@@ -73,7 +73,7 @@ impl MexcClient {
             ._http_client
             .request(
                 HttpMethods::Get,
-                "/api/v3/ping".into(),
+                "/api/v3/time".into(),
                 None,
                 None,
             )
@@ -87,7 +87,7 @@ impl MexcClient {
             ._http_client
             .request(
                 HttpMethods::Get,
-                "/api/v3/ping".into(),
+                "/api/v3/exchangeInfo".into(),
                 None,
                 None,
             )
