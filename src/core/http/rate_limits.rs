@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use crate::utils::time;
 
+#[derive(Debug, Clone)]
 pub struct RateLimits {
     rps: i32,
     request_history: HashMap<i32, i32>,

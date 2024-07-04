@@ -1,11 +1,11 @@
-use http::{HeaderMap, HeaderName, HeaderValue};
-use log::{error, info};
 use std::collections::HashMap;
+use tokio::time;
+use log::{error, info, warn};
+use http::{HeaderMap, HeaderName, HeaderValue};
 
 use reqwest::{Client, Method, Error, Response};
-
 use crate::core::http::rate_limits::RateLimits;
-use crate::utils::url::build_url;
+use crate::utils::url;
 
 pub enum HttpMethods {
     Get,
@@ -22,15 +22,15 @@ pub enum HttpMethods {
 impl HttpMethods {
     pub fn as_string(&self) -> String {
         match self {
-            Self::Get => return "GET".to_string(),
-            Self::Head => return "HEAD".to_string(),
-            Self::Post => return "POST".to_string(),
-            Self::Put => return "PUT".to_string(),
-            Self::Delete => return "DELETE".to_string(),
-            Self::Connect => return "CONNECT".to_string(),
-            Self::Options => return "OPTIONS".to_string(),
-            Self::Trace => return "TRACE".to_string(),
-            Self::Patch => return "PATCH".to_string(),
+            Self::Get => return "GET".into(),
+            Self::Head => return "HEAD".into(),
+            Self::Post => return "POST".into(),
+            Self::Put => return "PUT".into(),
+            Self::Delete => return "DELETE".into(),
+            Self::Connect => return "CONNECT".into(),
+            Self::Options => return "OPTIONS".into(),
+            Self::Trace => return "TRACE".into(),
+            Self::Patch => return "PATCH".into(),
         }
     }
 
@@ -63,6 +63,13 @@ impl HttpMethods {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct HttpResponse {
+    pub status_code: i32,
+    pub json: serde_json::Value,
+}
+
+#[derive(Debug, Clone)]
 pub struct HttpClient {
     client: Client,
     base_url: String,
@@ -74,7 +81,6 @@ pub struct HttpClient {
 
 impl HttpClient {
     pub fn new(
-        &self,
         base_url: String,
         headers: Option<HashMap<String, String>>,
         allowed_methods: Option<Vec<String>>,
@@ -83,15 +89,17 @@ impl HttpClient {
     ) -> Self {
         let mut _headers: HeaderMap = HeaderMap::new();
 
-        if headers.is_some() {
-            for (name, value) in headers.unwrap().iter() {
-                // _headers.insert(key, val)
-                _headers.insert(
-                    name.as_str(),
-                    HeaderValue::from_str(value.as_str()).unwrap(),
-                );
-            }
-        }
+        ///////// I WILL FIX IT LATER! //////////
+
+        // if headers.is_some() {
+        //     for (name, value) in headers.unwrap().iter() {
+        //         // _headers.insert(key, val)
+        //         _headers.insert(
+        //             name.as_str(),
+        //             HeaderValue::from_str(value.as_str()).unwrap(),
+        //         );
+        //     }
+        // }
 
         return Self {
             client: Client::new(),
@@ -103,14 +111,14 @@ impl HttpClient {
         };
     }
 
-    async fn request(
-        &self,
+    pub async fn request(
+        &mut self,
         method: HttpMethods,
         endpoint: String,
         params: Option<HashMap<String, String>>,
         json: Option<HashMap<(String, i64), (String, i64)>>,
-    ) -> Result<Response, Error> {
-        let url: String = build_url(self.base_url.clone(), Some(endpoint), params);
+    ) -> Result<HttpResponse, Error> {
+        let url: String = url::build(self.base_url.clone(), Some(endpoint), params);
 
         if !self.allowed_methods.contains(&method.as_string()) {
             let error_text: String =
@@ -123,6 +131,14 @@ impl HttpClient {
             panic!("{}", error_text);
         }
 
+        if self.rate_limits.is_limited() {
+            time::sleep(time::Duration::new(1, 0)).await;
+
+            if self.enable_logging {
+                warn!("Reached maximum of rps amount, sleep for 1 secs...")
+            }
+        }
+
         if self.enable_logging {
             info!(
                 "{}\t| {}\t| RPS: {}",
@@ -132,14 +148,21 @@ impl HttpClient {
             )
         }
 
-        let raw_request = self
+        let raw_request: Response = self
             .client
             .request(method.as_method(), url)
-            .headers(self.headers.clone())
+            // .headers(self.headers.clone())
             .json(&json)
             .send()
             .await?;
 
-        return Ok(raw_request);
+        self.rate_limits.new_request();
+
+        return Ok(
+            HttpResponse{
+                status_code: raw_request.status().as_u16() as i32,
+                json: raw_request.json().await?,
+            }
+        );
     }
 }
