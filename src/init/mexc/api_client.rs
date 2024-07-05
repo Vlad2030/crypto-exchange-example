@@ -1,9 +1,9 @@
-use reqwest::{Client, Method, Error, Response};
+use reqwest::Error;
 
-use crate::core::http::client::{HttpClient, HttpMethods, HttpResponse};
+use crate::core::http::client::{HttpClient, HttpMethods};
 
 
-#[derive(Debug, Clone)]
+#[derive(serde::Deserialize, Debug, Clone)]
 pub struct Ping {
     pub ping: bool,
 }
@@ -13,6 +13,40 @@ pub struct ServerTime {
     pub server_time: i32,
 }
 
+#[derive(serde::Deserialize, Debug, Clone)]
+pub struct ExchangeInfo {
+    pub exchange_filters: Vec<serde_json::Value>,
+    pub rate_limits: Vec<serde_json::Value>,
+    pub server_time: i32,
+    pub symbols: Vec<SymbolInfo>,
+    pub timezone: String,
+}
+
+#[derive(serde::Deserialize, Debug, Clone)]
+pub struct SymbolInfo {
+    pub base_asset: String,
+    pub base_asset_precision: i32,
+    pub base_commission_precision: i32,
+    pub base_size_precision: String,
+    pub filters: Vec<String>,
+    pub full_name: String,
+    pub is_margin_trading_allowed: bool,
+    pub is_spot_trading_allowed: bool,
+    pub maker_commission: String,
+    pub max_quote_amount: String,
+    pub max_quote_amount_market: String,
+    pub order_types: Vec<String>,
+    pub permissions: Vec<String>,
+    pub quote_amount_precision: String,
+    pub quote_amount_precision_market: String,
+    pub quote_asset: String,
+    pub quote_asset_precision: i32,
+    pub quote_commission_precision: i32,
+    pub quote_precision: i32,
+    pub status: String,
+    pub symbol: String,
+    pub taker_commission: String,
+}
 
 
 #[derive(Debug, Clone)]
@@ -82,7 +116,7 @@ impl MexcClient {
         return Ok(serde_json::from_value(request.json).unwrap())
     }
 
-    pub async fn exchange_info(&mut self) -> Result<ServerTime, Error> {
+    pub async fn exchange_info(&mut self) -> Result<ExchangeInfo, Error> {
         let request = self
             ._http_client
             .request(
